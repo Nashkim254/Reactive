@@ -10,20 +10,20 @@ class React<T extends ReactBase> extends StatefulWidget {
   State<React> createState() {
     return _ReactState();
   }
-
+///Find the ancestor
   static T of<T extends ReactBase>(BuildContext context) {
     React<T> provider = context.findAncestorWidgetOfExactType<React<T>>() as React<T>;
     return provider.react;
   }
 }
-
+///Dispose
 class _ReactState extends State<React> {
   @override
   void dispose() {
     widget.react.dispose();
     super.dispose();
   }
-
+///Build method to build the widget
   @override
   Widget build(BuildContext context) {
     return widget.child;
