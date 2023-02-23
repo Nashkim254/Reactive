@@ -1,37 +1,49 @@
 import 'dart:async';
 
-import 'package:example/models/counter_model.dart';
 import 'package:reactive/reactive.dart';
-class CounterBase implements ReactBase {
-  CounterModel _value = CounterModel(
-     value: 0,
-    createdAt: DateTime.now(),
-  );
-  CounterModel get value => _value;
 
-  final StreamController<CounterModel> _controller =  StreamController<CounterModel>.broadcast();
-  StreamSink<CounterModel> get _counterSink => _controller.sink;
-  Stream<CounterModel> get counterStream => _controller.stream;
-  CounterBase(){
-    _counterSink.add(value);
-  }
-  void incrementCounter(){
-    _value = _value.copyWith(
-      value: _value.value + 1,
-      createdAt: DateTime.now(),
-    );
-    _counterSink.add(value);
-  }
-  void decrementCounter(){
-    _value = _value.copyWith(
-      value: _value.value - 1,
-      createdAt: DateTime.now(),
-    );
-    _counterSink.add(value);
-  }
+enum CounterAction {Increment, Decrement, Reset}
+class CounterBase implements ReactBase {
+ int _value = 0;
+  int get value => _value;
+
+  final StreamController<int> _controller =  StreamController<int>.broadcast();
+  StreamSink<int> get _counterSink => _controller.sink;
+  Stream<int> get counterStream => _controller.stream;
+
+  final eventController = StreamController<CounterAction>();
+ StreamSink<CounterAction> get eventSink => eventController.sink;
+ Stream<CounterAction> get eventStream => eventController.stream;
+
+ CounterBase() {
+   if (_value == null) {
+     _value = 0;
+     _counterSink.add(_value);
+   }
+   eventStream.listen((event) {
+     switch (event) {
+       case CounterAction.Increment:
+         _value++;
+         print("increment");
+         break;
+       case CounterAction.Decrement:
+         _value--;
+         print("decrement");
+         break;
+       case CounterAction.Reset:
+         _value = 0;
+         print("reset");
+         break;
+       default:
+         _value = 0;
+     }
+     _counterSink.add(_value);
+   });
+ }
   @override
   void dispose() {
     _controller.close();
+    eventController.close();
   }
 
 }

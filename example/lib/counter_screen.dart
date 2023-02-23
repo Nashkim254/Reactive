@@ -15,20 +15,16 @@ class CounterScreen extends StatelessWidget {
         title: const Text("Counter Screen"),
       ),
       body: Center(
-        child: ReactBuilder<CounterModel>(
-          stream: react.counterStream,
-          initialData: react.value,
-          onLoaded: (model) {
-            return Text("The counter value is:${react.value.value}");
-          },
-        ),
+        child:StreamBuilder(builder: (context,snapshot){
+          return Text("pressed this times${snapshot.data}");
+        }),
       ),
       floatingActionButton: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: ()=> react.incrementCounter(),
+            onPressed: ()=> react.eventSink.add(CounterAction.Increment),
             child: const Center(
               child: Icon(Icons.add),
             ),
@@ -37,7 +33,7 @@ class CounterScreen extends StatelessWidget {
             height: 20,
           ),
           FloatingActionButton(
-            onPressed: () => react.decrementCounter(),
+            onPressed: () => react.eventSink.add(CounterAction.Decrement),
             child: const Center(
               child: Icon(Icons.remove),
             ),
