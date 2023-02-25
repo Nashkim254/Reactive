@@ -15,9 +15,13 @@ class CounterScreen extends StatelessWidget {
         title: const Text("Counter Screen"),
       ),
       body: Center(
-        child:StreamBuilder(builder: (context,snapshot){
-          return Text("pressed this times${snapshot.data}");
-        }),
+        child: ReactBuilder<int>(
+            stream: react.counterStream,
+            initialData: react.value,
+            onLoaded: (snapshot){
+              return Text('Button pressed this many times: $snapshot');
+            }
+        )
       ),
       floatingActionButton: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
